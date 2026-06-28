@@ -1,4 +1,9 @@
 from tokenizer import CharTokenizer
+import os
+
+# Always find shakespeare.txt relative to this file's location
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, 'data', 'shakespeare.txt')
 
 def test_roundtrip():
     text = "hello world"
@@ -8,7 +13,7 @@ def test_roundtrip():
 
 
 def test_vocab_coverage():
-    text = open('data/shakespeare.txt', 'r').read()
+    text = open(DATA_PATH, 'r').read()
     tok = CharTokenizer(text)
     for c in set(text):
         assert c in tok.stoi, f"'{c}' not in vocab"
