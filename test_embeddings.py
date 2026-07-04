@@ -56,6 +56,48 @@ def test_token_pos_different():
     print("PASS: different positions -> different encodings")
 
 
+def test_same_token_diff_positions():
+    embed = GPTEmbedding(
+        vocab_size=VOCAB_SIZE,
+        block_size=BLOCK_SIZE,
+        n_embed=N_EMBED
+        # dropout=0.0
+    )
+    embed.eval() # defaults to dropout = 0.0
+    idx = torch.tensor([[5, 10, 21, 32, 5, 53, 34, 17]]) # B = 1, T = 8
+    out = embed(idx) # shape [1, 8, 64]
+
+    vec_at_pos_0 = out[0][0]
+    vec_at_pos_4 = out[0][4]
+
+    assert not torch.allclose(vec_at_pos_0, vec_at_pos_4), \
+    "Same token at different position must produce diff output vector"
+    print(f"PASS: Same token at different position will produce different output vector")
+
+    tok_id = torch.tensor([[5]])
+    tok_emb_vec = embed.token_embed(tok_id)
+
+    pos_enc_all = embed.pos_embed(8)
+    pos_0_enc = pos_enc_all[0]
+    pos_4_enc = pos_enc_all[4]
+
+    # Reconstruct: final vectors of 5 based on positions.
+    reconstructed_pos_0 = tok_emb_vec.squeeze() + pos_0_enc
+    reconstructed_pos_4 = tok_emb_vec.squeeze() + pos_4_enc
+
+    assert torch.allclose(reconstructed_pos_0, vec_at_pos_0, atol=1e-6), \
+    "Reconstruction at pos0 must match forward pass output"
+    assert torch.allclose(reconstructed_pos_4, vec_at_pos_4, atol=1e-6), \
+    "Reconstruction at pos4 must match forward pass output"
+    print("PASS: final vector = token embed + position embed confirmed")
+
+
+
+
+
+
+
 if __name__ == '__main__':
     test_output_shape()
     test_token_pos_different()
+    test_same_token_diff_positions()
