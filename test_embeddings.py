@@ -51,7 +51,11 @@ def test_token_pos_different():
     print("PASS: same position 0 encoding consistent across sequence length")
 
     pos_embed_all = embed.pos_embed(4) # get encodings for 0, 1, 2, 3
-    assert not torch.allclose(pos_embed_all[0], pos_embed_all[1])
+    assert not torch.allclose(pos_embed_all[0], pos_embed_all[1]), \
+    "Different positions must have different encodings"
+    print("PASS: different positions -> different encodings")
+
+    
 
 
 if __name__ == '__main__':
