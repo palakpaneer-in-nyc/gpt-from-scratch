@@ -40,16 +40,16 @@ class GPTEmbedding(nn.Module):
     """
     def __init__(self, vocab_size, block_size, n_embed, dropout = 0.1):
         super().__init__()
-        self.token_emb = TokenEmbedding(vocab_size, n_embed)
-        self.pos_emb = PositionalEmbedding(block_size, n_embed)
+        self.token_embed = TokenEmbedding(vocab_size, n_embed)
+        self.pos_embed = PositionalEmbedding(block_size, n_embed)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, idx):
         # idx shape: [B, T]
         B, T = idx.shape
 
-        tok = self.token_emb(idx)   # [B, T, n_embed]
-        pos = self.pos_emb(T)       # [T, n_embed]
+        tok = self.token_embed(idx)   # [B, T, n_embed]
+        pos = self.pos_embed(T)       # [T, n_embed]
 
         # pos broadcast across batch dimension automatically
         # [B, T, n_embed] + [T, n_embed] = [B, T, n_embed]
