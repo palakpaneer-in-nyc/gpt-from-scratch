@@ -55,8 +55,9 @@ def test_token_pos_different():
     "Different positions must have different encodings"
     print("PASS: different positions -> different encodings")
 
-    
+
 
 
 if __name__ == '__main__':
     test_output_shape()
+    test_token_pos_different()
