@@ -29,16 +29,16 @@ def test_token_pos_different():
     )
 
     # Test1: Different token should always return different embeddings
-    token_1 = embed.tok_embed(torch.tensor([[1]])) # (batch size) B = 1, (block size) T = 1
-    token_2 = embed.tok_embed(torch.tensor([[2]])) # (batch size) B = 1, (block size) T = 1
+    token_1 = embed.token_embed(torch.tensor([[1]])) # (batch size) B = 1, (block size) T = 1
+    token_2 = embed.token_embed(torch.tensor([[2]])) # (batch size) B = 1, (block size) T = 1
 
     assert not torch.allclose(token_1, token_2), \
     "Different tokens must have different embeddings"
     print("PASS: Different tokens must have different embeddings")
 
     # Test2: Same token should always return same embeddings
-    token_a_1 = embed.tok_embed(torch.tensor([[5]])) # assume id/value for token 'a' is 5
-    token_a_2 = embed.tok_embed(torch.tensor([[5]])) # same as above
+    token_a_1 = embed.token_embed(torch.tensor([[5]])) # assume id/value for token 'a' is 5
+    token_a_2 = embed.token_embed(torch.tensor([[5]])) # same as above
     assert torch.allclose(token_a_1, token_a_2), \
     "Same token must always return same embedding"
     print(f"PASS: Same token -> same embedding always")
@@ -54,8 +54,6 @@ def test_token_pos_different():
     assert not torch.allclose(pos_embed_all[0], pos_embed_all[1]), \
     "Different positions must have different encodings"
     print("PASS: different positions -> different encodings")
-
-
 
 
 if __name__ == '__main__':
