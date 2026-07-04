@@ -92,8 +92,33 @@ def test_same_token_diff_positions():
     print("PASS: final vector = token embed + position embed confirmed")
 
 
+def test_variable_sequence_length():
+    embed = GPTEmbedding(
+        vocab_size=VOCAB_SIZE,
+        block_size=BLOCK_SIZE,
+        n_embed=N_EMBED
+    )
+    for T in [1, 8, 16, 32]:
+        idx = torch.randint(0, VOCAB_SIZE, (BATCH_SIZE, T))
+        out = embed(idx)
+        assert out.shape == (BATCH_SIZE, T, N_EMBED)
+    print("PASS: Variable sequence length works")
 
 
+def test_gradients_flow():
+    embed = GPTEmbedding(
+        vocab_size=VOCAB_SIZE,
+        block_size=BLOCK_SIZE,
+        n_embed=N_EMBED
+    )
+
+    idx = torch.randint(0, VOCAB_SIZE, (BATCH_SIZE, BLOCK_SIZE))
+    out = embed(idx)
+    loss = out.sum()
+    loss.backward()
+    assert embed.token_embed.embedding.weight.grad is not None
+    assert embed.pos_embed.embedding.weight.grad is not None
+    print(f"PASS: gradients flow through the embeddings")
 
 
 
@@ -101,3 +126,5 @@ if __name__ == '__main__':
     test_output_shape()
     test_token_pos_different()
     test_same_token_diff_positions()
+    test_variable_sequence_length()
+    test_gradients_flow()
