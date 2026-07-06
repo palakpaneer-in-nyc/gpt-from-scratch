@@ -64,4 +64,50 @@ class Head(nn.Module):
             return out, weights
         return out
 
-        
+
+class MultiHeadAttention(nn.Module):
+    """
+    Multiple attention heads running in parallel.
+    Takes: x of shape [B, T, n_embed]
+    Returns: output of shape [B, T, n_embed]
+    """ 
+    def __init__(self, n_heads, n_embed, block_size, dropout=0.0):
+        super().__init__()
+        assert n_embed & n_heads == 0, \
+        f"n_embed ({n_embed}) must be divisible by n_heads ({n_heads})"
+
+        self.head_size = n_embed // n_heads
+        self.n_heads = n_heads
+
+        self.heads = nn.ModuleList([
+            Head(self.head_size, n_embed, block_size, dropout)
+            for _ in range(n_heads)
+        ])
+
+        # Ouput projection Wo -> project concatenated heads back to embedding space, n_embed
+        self.proj = nn.Linear(n_embed, n_embed)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x, return_weights=False):
+        # Run all heads in parallel.
+        if return_weights:
+            head_outputs = []
+            head_weights = []
+            for h in self.heads:
+                out, w = h(x, return_weights=True)
+                head_outputs.append(out)
+                head_weights.append(w)
+        else:
+            head_outputs = [h(x) for h in self.heads]
+
+        # Concatenate along the last dimension which is n_embed
+        # each head: [B, T, head_size]
+        # after cat: [B, T, n_heads X head_size] = [B, T, n_embed]
+        out = torch.cat(head_outputs, dim=-1)
+
+        # Project back to n_embed via Wo
+        out = self.dropout(self.proj(out))
+    
+        if return_weights:
+            return out, head_weights
+        return out
