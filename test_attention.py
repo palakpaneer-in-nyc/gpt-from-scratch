@@ -77,6 +77,7 @@ def test_variable_sequence_length():
     
     print("PASS: variable sequence length")
 
+
 def test_gradients_flow():
     """Gradients must reach Q, K, V projection weights."""
     head = Head(HEAD_SIZE, N_EMBED, BLOCK_SIZE)

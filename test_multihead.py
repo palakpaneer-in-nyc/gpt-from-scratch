@@ -10,7 +10,7 @@ HEAD_SIZE = 16 # 64/4 -> 16 derived.
 
 def test_output_shape():
     x = torch.randn(BATCH_SIZE, BLOCK_SIZE, N_EMBED)
-    mheads = MultiHeadAttention(N_HEADS, N_EMBED, BLOCK_SIZE)
+    mheads = MultiHeadAttention(N_EMBED, N_HEADS, BLOCK_SIZE)
     out = mheads(x)
 
     assert out.shape == (BATCH_SIZE, BLOCK_SIZE, N_EMBED), \
@@ -25,7 +25,7 @@ def test_output_shape():
 
 
 def test_n_heads_and_head_size():
-    mheads = MultiHeadAttention(N_HEADS, N_EMBED, BLOCK_SIZE)
+    mheads = MultiHeadAttention(N_EMBED, N_HEADS, BLOCK_SIZE)
     head_size = N_EMBED // N_HEADS
 
     assert len(mheads.heads) == N_HEADS, \
@@ -38,7 +38,7 @@ def test_n_heads_and_head_size():
 
 
 def test_independent_heads():
-    mheads = MultiHeadAttention(N_HEADS, N_EMBED, BLOCK_SIZE)
+    mheads = MultiHeadAttention(N_EMBED, N_HEADS, BLOCK_SIZE)
 
     for i in range(N_HEADS):
         for j in range(i+1, N_HEADS):
@@ -52,8 +52,8 @@ def test_independent_heads():
 
 def test_single_head_equals_multihead_n1():
     mheads = MultiHeadAttention(
-        n_heads=1,
         n_embed=N_EMBED,
+        n_heads=1,
         block_size=BLOCK_SIZE)
     x = torch.randn(BATCH_SIZE, BLOCK_SIZE, N_EMBED)
     out = mheads(x)
@@ -66,8 +66,8 @@ def test_single_head_equals_multihead_n1():
 def test_invalid_n_heads_raises():
     try:
         mheads = MultiHeadAttention(
-            n_heads=3, 
             n_embed=N_EMBED,
+            n_heads=3, 
             block_size=BLOCK_SIZE
         )
         assert False, "should have raised AssertionError"
@@ -76,7 +76,7 @@ def test_invalid_n_heads_raises():
 
 
 def test_gradient_flow():
-    mheads = MultiHeadAttention(N_HEADS, N_EMBED, BLOCK_SIZE)
+    mheads = MultiHeadAttention(N_EMBED, N_HEADS, BLOCK_SIZE)
     x = torch.randn(BATCH_SIZE, BLOCK_SIZE, N_EMBED)
     out = mheads(x)
     loss = out.sum()

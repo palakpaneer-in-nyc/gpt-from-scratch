@@ -121,7 +121,6 @@ def test_gradients_flow():
     print(f"PASS: gradients flow through the embeddings")
 
 
-
 if __name__ == '__main__':
     test_output_shape()
     test_token_pos_different()

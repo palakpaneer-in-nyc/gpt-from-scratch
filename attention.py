@@ -71,7 +71,7 @@ class MultiHeadAttention(nn.Module):
     Takes: x of shape [B, T, n_embed]
     Returns: output of shape [B, T, n_embed]
     """ 
-    def __init__(self, n_heads, n_embed, block_size, dropout=0.0):
+    def __init__(self, n_embed, n_heads, block_size, dropout=0.0):
         super().__init__()
         assert n_embed & n_heads == 0, \
         f"n_embed ({n_embed}) must be divisible by n_heads ({n_heads})"
