@@ -150,7 +150,7 @@ class GPT(nn.Module):
         # * Save parameters, halves the memory (if not) and empirically improves the performance
         # * conceptually, both are essentially answering "what does token 'c' look like in n_embed
         # dimensional space.
-        self.transformer['embedding'].token_embed.weight = \
+        self.transformer['embedding'].token_embed.embedding.weight = \
             self.lm_head.weight
         
         # Intitalize weights (recursively  called for all sduless/sub-modules); 
@@ -234,7 +234,7 @@ class GPT(nn.Module):
             probs = nn.functional.softmax(logits, dim=-1)
 
             # Sample next token
-            next_token = torch.multinominal(probs, num_samples=1) # [B, 1]
+            next_token = torch.multinomial(probs, num_samples=1) # [B, 1]
 
             # Append to sequence
             idx = torch.cat([idx, next_token], dim=1)  # [B, T+1]
