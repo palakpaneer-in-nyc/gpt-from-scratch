@@ -30,7 +30,7 @@ class PositionalEmbedding(nn.Module):
     def forward(self, T):
         # T: current sequence length
         # positions: [0, 1, 2, 3, ...., T-1]
-        positions = torch.arange(T)  # shape: [T]
+        positions = torch.arange(T, device=self.embedding.weight.device)  # shape: [T]
         return self.embedding(positions)  # shape: [T, n_embed]
     
 
