@@ -115,7 +115,7 @@ def train(config):
         
         # Evaluate periodically
         if step % config['eval_every'] == 0:
-            losses = estimate_loss(train_data, test_data, config)
+            losses = estimate_loss(model, train_data, test_data, config)
             print(f"step {step:5d} | "
                   f"train loss: {losses['train']:.4f} | "
                   f"val loss: {losses['val']:.4f}")
