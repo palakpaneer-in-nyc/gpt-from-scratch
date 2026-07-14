@@ -4,6 +4,9 @@ import torch.nn as nn
 from model import GPT
 from tokenizer import CharTokenizer
 
+# Always find shakespeare.txt relative to this file's location
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # ------ Config --------------------------------
 
 config = {
@@ -42,7 +45,8 @@ print(f"using device: {device}")
 # ------ Data --------------------------------------
 
 def load_data(config):
-    text = open(config['data_path'], 'r').read()
+    data_path = os.path.join(BASE_DIR, 'data', 'shakespeare.txt')
+    text = open(data_path, 'r').read()
     tok = CharTokenizer(text)
     config['vocab_size'] = tok.vocab_size
 
