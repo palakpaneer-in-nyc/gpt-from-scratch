@@ -142,7 +142,7 @@ def train(config):
         loss.backward()
 
         # Gradient clipping - prevents exploding gradients
-        torch.nn.utils.clip_grad_norm(model.parameters(), config['grad_clip'])
+        torch.nn.utils.clip_grad_norm_(model.parameters(), config['grad_clip'])
 
         # weight update
         optimizer.step()
@@ -157,7 +157,7 @@ def generate_sample(model, tok, prompt="To be", max_tokens=200, temperature=0.8)
     context = torch.tensor(
         tok.encode(prompt),
         dtype=torch.long
-    ).unsqueeze(0).todevice() # [1, T]
+    ).unsqueeze(0).to(device) # [1, T]
 
     with torch.no_grad():
         output = model.generate(
