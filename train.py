@@ -10,6 +10,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # ------ Config --------------------------------
 
 config = {
+    # Run identity - keeps separate checkpoints from different tuning runs
+    'run_name'  :   'default',
+
     # Data
     'data_path' :   'data/shakespeare.txt',
     'ckpt_dir'  :   'checkpoints',
