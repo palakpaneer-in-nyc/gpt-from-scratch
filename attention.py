@@ -73,7 +73,7 @@ class MultiHeadAttention(nn.Module):
     """ 
     def __init__(self, n_embed, n_heads, block_size, dropout=0.0):
         super().__init__()
-        assert n_embed & n_heads == 0, \
+        assert n_embed % n_heads == 0, \
         f"n_embed ({n_embed}) must be divisible by n_heads ({n_heads})"
 
         self.head_size = n_embed // n_heads

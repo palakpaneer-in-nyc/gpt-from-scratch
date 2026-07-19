@@ -106,7 +106,8 @@ def train(config):
     )
 
     # Checkpoint directory
-    os.makedirs(config['ckpt_dir'], exist_ok=True)
+    ckpt_dir = os.path.join(BASE_DIR, config['ckpt_dir'])
+    os.makedirs(ckpt_dir, exist_ok=True)
 
     # Training loop
     best_val_loss = float('inf')
@@ -123,7 +124,7 @@ def train(config):
         # Save best checkpoint
         if losses['val'] < best_val_loss:
             best_val_loss = losses['val']
-            ckpt_path = os.path.join(config['ckpt_dir'], 'best_model.pt')
+            ckpt_path = os.path.join(ckpt_dir, f"{config['run_name']}_best_model.pt")
             torch.save({
                 'step'      : step,
                 'model'     : model.state_dict(),
