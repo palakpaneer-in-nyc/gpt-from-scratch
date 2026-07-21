@@ -13,7 +13,11 @@ class Head(nn.Module):
     def __init__(self, head_size, n_embed, block_size, dropout=0.0):
         super().__init__()
 
-        # Create Q, K, V weight matrix of shape [head_size, n_embed]
+        # nn.Linear(in, out) -> takes the dimension "in" & projects 
+        # it to "out" dimensions.
+        # small note: nn.Linear create Q, K, V weight matrix of shape 
+        # [head_size, n_embed] because self.query(x) = x @ WqT i.e.
+        # this weight matrix will be transposed internally.
         self.query  =   nn.Linear(n_embed, head_size, bias=False)
         self.key    =   nn.Linear(n_embed, head_size, bias=False)
         self.value  =   nn.Linear(n_embed, head_size, bias=False)
@@ -34,7 +38,7 @@ class Head(nn.Module):
         B, T, C = x.shape # C = n_embed
 
         # Step1: Project input to Q, K, V - nn.Linear(x) does matrix multiplictaion.
-        # [B, T, n_embed] @ [n_embed, head_size] (w*T transposed weight matrix) -> [B, T, head_size]  
+        # [B, T, n_embed] @ [n_embed, head_size] (i.e. w*T transposed weight matrix) -> [B, T, head_size]  
         q = self.query(x) # x @ WqT (i.e. Wq transposed) [B, T, head_size]
         k = self.key(x)   # x @ WkT (i.e. Wk transposed) [B, T, head_size]
         v = self.value(x) # x @ WvT (i.e. Wv transposed) [B, T, head_size]
@@ -79,6 +83,10 @@ class MultiHeadAttention(nn.Module):
         self.head_size = n_embed // n_heads
         self.n_heads = n_heads
 
+        # Small note on nn.ModuleList
+        #   If we used a regular list [Head(...) for ...], Pytorch wouldn't know
+        #   those Heads exist - their parameter wouldn't show up in model.parameters()
+        #   & the optimizer would never update them.
         self.heads = nn.ModuleList([
             Head(self.head_size, n_embed, block_size, dropout)
             for _ in range(n_heads)

@@ -10,11 +10,12 @@ class TokenEmbedding(nn.Module):
     """
     def __init__(self, vocab_size, n_embed):
         super().__init__()
-        self.embedding = nn.Embedding(vocab_size, n_embed)
+        self.embedding = nn.Embedding(vocab_size, n_embed) # [VOCAB_SIZE, N_EMBED] matrix 
+        # initilaized with values (0, 1) mean ~= 0, std.dev ~= 1
 
     def forward(self, idx):
         # idx shape: [B, T] (batch size, sequence length)
-        # output : [B, T, n_embed]
+        # output : [B, T, n_embed] <- simple lookup for B * T tokens in idx.
         return self.embedding(idx)
     
 
@@ -28,7 +29,8 @@ class PositionalEmbedding(nn.Module):
         self.embedding = nn.Embedding(block_size, n_embed)
 
     def forward(self, T):
-        # T: current sequence length
+        # T: current sequence length / context window - for which model is trained & evaluated.
+        # This parameter is a major deciding factor of model size (XS, S, M etc)
         # positions: [0, 1, 2, 3, ...., T-1]
         positions = torch.arange(T, device=self.embedding.weight.device)  # shape: [T]
         return self.embedding(positions)  # shape: [T, n_embed]
@@ -43,6 +45,17 @@ class GPTEmbedding(nn.Module):
         super().__init__()
         self.token_embed = TokenEmbedding(vocab_size, n_embed)
         self.pos_embed = PositionalEmbedding(block_size, n_embed)
+        # *********** Dropout **************
+        # prevents overfitting, during training it drops 0.xx fraction
+        # of neurons. Each neuron has the probability (0 to 0.xx) of being set
+        # to zero for current step. Does 2 things:
+        # 1. Avoids co-adaptation: between neurons; w/o dropout neurons can develop 
+        #    reliance on each other to fix their mistakes.
+        # 2. Scaling: takes care of scaling by multiplying with * 1/0.xx. Because 
+        #    dropout is turned off during inference -> all neurons are active. Signals
+        #    flowing through the network would be XX% higher than training. Mismatch
+        #    will break everything.
+        # *************************************
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, idx):
