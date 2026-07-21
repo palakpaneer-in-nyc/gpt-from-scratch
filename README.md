@@ -24,10 +24,10 @@ Embedding + positional encoding
     ↓
 ┌─────────────────────────────────┐
 │  × N layers                     │
-│  Multi-head self-attention       │
-│  Add & norm (residual)           │
-│  Feed-forward network (FFN)      │
-│  Add & norm (residual)           │
+│  Multi-head self-attention      │
+│  Add & norm (residual)          │
+│  Feed-forward network (FFN)     │
+│  Add & norm (residual)          │
 └─────────────────────────────────┘
     ↓
 Linear + softmax (output head)
@@ -450,19 +450,3 @@ python3.11 test_gpt.py
 # Train on Shakespeare (run in Colab for GPU)
 python train.py
 ```
-
-## [Step1] Tokenizer
-
-## [Step2] Embeddings
-
-## [Step3] Single Attention Head
-
-
-
-## [Step4] Multi-head Attention
-
-## [Step5] Transformer block
-
-## [Step6] Training
-
-## [Step7] Generation
