@@ -90,6 +90,7 @@ def estimate_loss(model, train_data, val_data, config, eval_batches=20):
 def train(config):
     # Load data
     train_data, test_data, tok = load_data(config)
+    print(f"Vocab size: {tok.vocab_size}")
     print(f"Train tokens: {len(train_data):,} Val tokens: {len(test_data):,}")
 
     # Build model
