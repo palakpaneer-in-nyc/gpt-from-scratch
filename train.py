@@ -110,7 +110,9 @@ def train(config):
     )
 
     # Checkpoint directory
+    print(f"BASE_DIR: {BASE_DIR}")
     ckpt_dir = os.path.join(BASE_DIR, config['ckpt_dir'])
+    print(f"checkpoints will be stored: {ckpt_dir}")
     os.makedirs(ckpt_dir, exist_ok=True)
 
     # Training loop
