@@ -190,6 +190,12 @@ class GPT(nn.Module):
     
     def count_params(self):
         return sum(p.numel() for p in self.parameters())
+
+    def forward_repr(self, idx):
+        x = self.transformer['embedding'](idx)  # [B, T, n_embed]
+        x = self.transformer['blocks'](x)
+        x = self.transformer['ln_f'](x)
+        return x
     
     def forward(self, idx, targets=None):
         B, T = idx.shape
