@@ -193,8 +193,8 @@ class GPT(nn.Module):
 
     def forward_repr(self, idx):
         x = self.transformer['embedding'](idx)  # [B, T, n_embed]
-        x = self.transformer['blocks'](x)
-        x = self.transformer['ln_f'](x)
+        x = self.transformer['blocks'](x)       # [B, T, n_embed]
+        x = self.transformer['ln_f'](x)         # [B, T, n_embed]
         return x
     
     def forward(self, idx, targets=None):
@@ -203,13 +203,7 @@ class GPT(nn.Module):
             f"Sequence length {T} exceeds block_size {self.block_size}"
         
         # Embedding
-        x = self.transformer['embedding'](idx)  # [B, T, n_embed]
-
-        # N transformer blocks
-        x = self.transformer['blocks'](x)       # [B, T, n_embed]
-
-        # Final LayerNorm
-        x = self.transformer['ln_f'](x)         # [B, T, n_embed]
+        x = self.forward_repr(idx)  # [B, T, n_embed]
 
         # Project to vocabulary
         logits = self.lm_head(x)                # [B, T, vocab_size]
